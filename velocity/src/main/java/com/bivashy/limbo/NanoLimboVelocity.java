@@ -32,6 +32,7 @@ public class NanoLimboVelocity {
     private final ProxyServer server;
     private final Path dataFolder;
     private final LimboConfig limboConfig;
+    public static CommandHandler<Command> commandHandler;
 
     @Inject
     public NanoLimboVelocity(ProxyServer server, @DataDirectory Path dataFolder) {
@@ -43,20 +44,24 @@ public class NanoLimboVelocity {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
-        CommandHandler<Command> commandHandler = new LampVelocityCommandHandler(this).registerAll();
+        commandHandler = new LampVelocityCommandHandler(this).registerAll();
         for (VelocityLimboServer velocityLimboServer : limboConfig.getServers()) {
-            LimboServer server = new LimboServer(velocityLimboServer.getLimboConfig(), commandHandler,
-                    getClass().getClassLoader());
+            createLimbo(velocityLimboServer, commandHandler);
+        }
+    }
 
-            ServerInfo serverInfo = new ServerInfo(velocityLimboServer.getLimboName(),
-                    (InetSocketAddress) velocityLimboServer.getLimboConfig().getAddress());
-            servers.put(serverInfo.getName(), server);
-            this.server.registerServer(serverInfo);
-            try {
-                server.start();
-            } catch(Exception ex) {
-                ex.printStackTrace();
-            }
+    public void createLimbo(VelocityLimboServer velocityLimboServer, CommandHandler<Command> commandHandler) {
+        LimboServer server = new LimboServer(velocityLimboServer.getLimboConfig(), commandHandler,
+                getClass().getClassLoader());
+
+        ServerInfo serverInfo = new ServerInfo(velocityLimboServer.getLimboName(),
+                (InetSocketAddress) velocityLimboServer.getLimboConfig().getAddress());
+        servers.put(serverInfo.getName(), server);
+        this.server.registerServer(serverInfo);
+        try {
+            server.start();
+        } catch(Exception ex) {
+            ex.printStackTrace();
         }
     }
 
