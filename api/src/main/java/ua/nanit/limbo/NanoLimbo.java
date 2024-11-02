@@ -20,7 +20,6 @@ package ua.nanit.limbo;
 import java.nio.file.Paths;
 
 import ua.nanit.limbo.configuration.YamlLimboConfig;
-import ua.nanit.limbo.server.ConsoleCommandHandler;
 import ua.nanit.limbo.server.LimboServer;
 import ua.nanit.limbo.server.Log;
 
@@ -28,10 +27,8 @@ public final class NanoLimbo {
 
     public static void main(String[] args) {
         try {
-            ConsoleCommandHandler consoleCommandHandler = new ConsoleCommandHandler();
             ClassLoader classLoader = LimboServer.class.getClassLoader();
-            LimboServer server = new LimboServer(new YamlLimboConfig(Paths.get("./"), classLoader).load(), consoleCommandHandler, classLoader);
-            consoleCommandHandler.registerAll(server).start();
+            LimboServer server = new LimboServer(new YamlLimboConfig(Paths.get("./"), classLoader).load(), classLoader);
             server.start();
             Runtime.getRuntime().addShutdownHook(new Thread(server::stop, "NanoLimbo shutdown thread"));
         } catch(Exception e) {

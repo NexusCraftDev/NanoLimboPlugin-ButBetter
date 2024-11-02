@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.inject.Inject;
-import com.bivashy.limbo.command.LampVelocityCommandHandler;
 import com.bivashy.limbo.config.LimboConfig;
 import com.bivashy.limbo.config.model.VelocityLimboServer;
 import com.velocitypowered.api.event.Subscribe;
@@ -17,8 +16,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 
 import ua.nanit.limbo.NanoLimbo;
-import ua.nanit.limbo.server.Command;
-import ua.nanit.limbo.server.CommandHandler;
 import ua.nanit.limbo.server.LimboServer;
 
 @Plugin(id = "nanolimbovelocity", name = "NanoLimboVelocity", version = "1.0.11", authors = "bivashy, Nan1t")
@@ -32,7 +29,6 @@ public class NanoLimboVelocity {
     private final ProxyServer server;
     private final Path dataFolder;
     private final LimboConfig limboConfig;
-    public static CommandHandler<Command> commandHandler;
 
     @Inject
     public NanoLimboVelocity(ProxyServer server, @DataDirectory Path dataFolder) {
@@ -44,14 +40,13 @@ public class NanoLimboVelocity {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
-        commandHandler = new LampVelocityCommandHandler(this).registerAll();
         for (VelocityLimboServer velocityLimboServer : limboConfig.getServers()) {
-            createLimbo(velocityLimboServer, commandHandler);
+            createLimbo(velocityLimboServer);
         }
     }
 
-    public void createLimbo(VelocityLimboServer velocityLimboServer, CommandHandler<Command> commandHandler) {
-        LimboServer server = new LimboServer(velocityLimboServer.getLimboConfig(), commandHandler,
+    public void createLimbo(VelocityLimboServer velocityLimboServer) {
+        LimboServer server = new LimboServer(velocityLimboServer.getLimboConfig(),
                 getClass().getClassLoader());
 
         ServerInfo serverInfo = new ServerInfo(velocityLimboServer.getLimboName(),

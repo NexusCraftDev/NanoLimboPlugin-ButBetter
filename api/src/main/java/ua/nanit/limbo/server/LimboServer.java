@@ -50,12 +50,10 @@ public final class LimboServer {
     private EventLoopGroup workerGroup;
 
     private final LimboConfig config;
-    private final CommandHandler<Command> commandHandler;
     private final ClassLoader classLoader;
 
-    public LimboServer(LimboConfig config, CommandHandler<Command> commandHandler, ClassLoader classLoader) {
+    public LimboServer(LimboConfig config, ClassLoader classLoader) {
         this.config = config;
-        this.commandHandler = commandHandler;
         this.classLoader = classLoader;
     }
 
@@ -77,10 +75,6 @@ public final class LimboServer {
 
     public DimensionRegistry getDimensionRegistry() {
         return dimensionRegistry;
-    }
-
-    public CommandHandler<Command> getCommandManager() {
-        return commandHandler;
     }
 
     public void start() throws Exception {
